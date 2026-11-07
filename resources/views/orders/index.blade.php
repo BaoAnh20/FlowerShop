@@ -3,7 +3,7 @@
 @section('title', 'Lịch Sử Đơn Hàng - BAFlorist')
 
 @section('content')
-<div class="container py-4">
+<div class="container-fluid px-3 px-md-4 py-4">
     <!-- Tiêu đề trang được căn giữa và làm nổi bật -->
     <div class="text-center mb-5">
         <h2 class="fw-bold mb-2 text-primary-custom" style="font-family: var(--font-heading);">

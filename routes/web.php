@@ -2,14 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
-
+use App\Http\Controllers\HomeController;
 
 // --- 1. FE USER ---
 
-// home
-Route::get('/', function () {
-    return view('home');
-})->name('home');
+// Trang chủ (Gọi HomeController để truyền dữ liệu categories)
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // list sp
 Route::get('/products', function () {
@@ -58,13 +56,12 @@ Route::get('/orders', function () {
 })->name('orders.index');
 
 Route::get('/orders/lookup', function () {
-    return view('orders.lookup');      // tra cứu đơn = mã đơn/email sdt
+    return view('orders.lookup'); // tra cứu đơn = mã đơn/email sdt
 })->name('orders.lookup');
 
 Route::get('/orders/{id}', function ($id) {
     return view('orders.show', ['id' => $id]);
 })->name('orders.show');
-
 
 // Xác thực tài khoản khách hàng (Login / Register)
 Route::get('/login', function () {
@@ -87,7 +84,6 @@ Route::post('/logout', function () {
     return redirect()->route('home')->with('success', 'Đã đăng xuất!');
 })->name('logout');
 
-
 // Các trang thông tin tĩnh
 Route::get('/ve-baflorist', function () {
     return view('aboutus.index');
@@ -102,12 +98,8 @@ Route::get('/chinh-sach-doi-tra', function () {
 })->name('refund.index');
 
 
-
-
 // --- 2. FE ADMIN ---
-
 Route::prefix('admin')->name('admin.')->group(function () {
-
     // 1. Đăng nhập Ad
     Route::get('/login', function () {
         return view('admin.auth.login');
@@ -115,10 +107,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::post('/login', function (Request $request) {
         return redirect()->route('admin.dashboard')->with('success', 'Đăng nhập quản trị thành công!');
-    })->name('login.submit'); 
+    })->name('login.submit');
 
     Route::post('/logout', function () {
-        return redirect()->route('admin.login')->with('success', 'Đã đăng xuất quản trị!');
+        return redirect()->route('login')->with('success', 'Đã đăng xuất quản trị!');
     })->name('logout');
 
     // 2. Dashboard
@@ -126,11 +118,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         return view('admin.dashboard');
     })->name('dashboard');
 
-    // 3. Quản lý danh mục - đã gộp vào products.index
-    // Route::get('/categories', function () {
-    //     return view('admin.categories.index');
-    // })->name('categories.index');
+    Route::get('/dashboard', function () {
+        return view('admin.dashboard');
+    });
 
+    // 3. Quản lý danh mục
     Route::post('/categories', function (Request $request) {
         return redirect()->route('admin.categories.index')->with('success', 'Thêm danh mục thành công!');
     })->name('categories.store');

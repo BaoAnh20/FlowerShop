@@ -3,7 +3,7 @@
 @section('title', 'Giỏ Hàng & Thanh Toán - BAFlorist')
 
 @section('content')
-<div class="container py-5" style="max-width: 1000px;">
+<div class="container-fluid px-3 px-md-4 py-4">
     <h3 class="fw-bold mb-4 text-primary-custom d-flex align-items-center gap-2">
         <i class="fa-solid fa-bag-shopping"></i> Giỏ Hàng Của Bạn
     </h3>

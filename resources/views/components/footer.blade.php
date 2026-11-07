@@ -57,7 +57,6 @@
 
         <hr class="my-5" style="border-color: rgba(123, 17, 19, 0.08); opacity: 1;">
 
-        <!-- Dòng cuối -->
         <div class="text-center pt-2">
             <p class="mb-0 text-muted small fw-medium" style="letter-spacing: 0.2px;">
                 <i class="fa-solid fa-shield-heart me-2 text-primary-custom"></i>Cam kết hoa tươi 100%

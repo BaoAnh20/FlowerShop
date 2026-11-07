@@ -5,7 +5,7 @@
 @section('content')
 <div class="container py-5" style="max-width: 720px;">
     
-    <!--  Toast đặt thành công -->
+    <!-- Toast đặt thành công -->
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 1080;">
         <div id="successToast" class="toast align-items-center text-white border-0 shadow-lg rounded-pill px-3 py-2" role="alert" aria-live="assertive" aria-atomic="true" style="background-color: var(--burgundy-primary); display: none;">
             <div class="d-flex align-items-center">
@@ -23,7 +23,7 @@
                 <i class="fa-solid fa-circle-info mt-0.5 text-warning"></i>
                 <div>
                     <strong>BAFlorist giao hoa tại TP. Hồ Chí Minh.</strong><br>
-                    Chúng tôi sẽ liên hệ lại quý khách để xác nhận thông tin đơn hàng.
+                    Chúng tôi sẽ liên hệ lại quý khách để xác nhận thông tin đơn hàng sau khi nhận thanh toán.
                 </div>
             </div>
         </div>
@@ -196,13 +196,7 @@
                     <div class="form-check">
                         <input class="form-check-input custom-checkbox" type="radio" name="shipping_fee_option" id="ship_zone7" value="80000">
                         <label class="form-check-label text-dark cursor-pointer" for="ship_zone7">
-                            Quận 9 - Quận 12 - Nhà Bè - Bình Chánh - Hóc Môn (Theo Phí Grab) - Thủ Đức: <strong class="price-number">80.000 ₫</strong>
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input custom-checkbox" type="radio" name="shipping_fee_option" id="ship_zone8" value="80000">
-                        <label class="form-check-label text-dark cursor-pointer" for="ship_zone8">
-                            Thủ Đức: <strong class="price-number">80.000 ₫</strong>
+                            Quận 9 - Quận 12 - Nhà Bè - Bình Chánh - Hóc Môn - Thủ Đức: <strong class="price-number">80.000 ₫</strong>
                         </label>
                     </div>
                     <div class="form-check">
@@ -221,48 +215,30 @@
                     <span class="price-number text-primary-custom fs-3 fw-bold">4.500.000 ₫</span>
                 </div>
                 <p class="text-muted small mb-4">
-                    Tạm tính &middot; Chúng tôi sẽ báo <a href="#" class="text-decoration-underline text-primary-custom">phí phụ thu</a> và ưu đãi (nếu có) khi liên hệ
+                    Tạm tính · Chúng tôi sẽ báo <a href="#" class="text-decoration-underline text-primary-custom">phí phụ thu</a> và ưu đãi (nếu có) khi liên hệ
                 </p>
 
                 <!-- Phương thức thanh toán -->
-                <div class="mb-4">
-                    <label class="form-label small text-muted fw-semibold mb-2">Phương thức thanh toán</label>
-                    <div class="d-flex flex-column gap-2">
-                        <div class="form-check p-3 rounded-3 bg-light border-0">
-                            <input class="form-check-input custom-checkbox" type="radio" name="payment_method" id="pay_cod" value="cod_deposit" checked onchange="handlePaymentMethodChange()">
-                            <label class="form-check-label small fw-semibold text-dark ms-2 cursor-pointer" for="pay_cod">
-                                Thanh toán COD (Cọc trước 30% qua chuyển khoản)
-                            </label>
-                        </div>
-                        <div class="form-check p-3 rounded-3 bg-light border-0">
-                            <input class="form-check-input custom-checkbox" type="radio" name="payment_method" id="pay_bank" value="banking_full" onchange="handlePaymentMethodChange()">
-                            <label class="form-check-label small fw-semibold text-dark ms-2 cursor-pointer" for="pay_bank">
-                                Chuyển khoản 100% trước (Tặng ẩn danh / Bất ngờ)
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- cọc & COD -->
-                <div id="depositDetailsSection" class="p-3.5 mb-4 rounded-4 bg-light border-0">
-                    <div class="d-flex justify-content-between small mb-2 text-muted">
-                        <span>Tiền cọc trước cần thanh toán (30%):</span>
-                        <span class="fw-bold text-dark price-number">1.350.000 ₫</span>
-                    </div>
-                    <div class="d-flex justify-content-between small text-muted mb-0">
-                        <span>Thanh toán khi nhận hoa (COD):</span>
-                        <span class="fw-bold text-success price-number">3.150.000 ₫</span>
+                <input type="hidden" name="payment_method" value="banking_full">
+                
+                <div class="p-3 mb-4 rounded-3 bg-light border-0 d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-qrcode text-primary-custom fs-4"></i>
+                    <div>
+<div class="small fw-bold text-dark">Thanh toán ngay</div>
+<div class="text-muted" style="font-size: 0.85rem;">
+    Hoàn tất thanh toán để xác nhận đơn hàng
+</div>
                     </div>
                 </div>
 
                 <!-- KHUNG QR -->
                 <div id="qrCodeContainer" class="p-4 mb-4 rounded-4 bg-light border text-center" style="border-style: dashed !important; border-color: var(--burgundy-primary) !important;">
-                    <h6 class="fw-bold text-primary-custom mb-2" style="font-family: var(--font-heading);">Quét mã QR để chuyển khoản</h6>
+                    <h6 class="fw-bold text-primary-custom mb-2" style="font-family: var(--font-heading);">Quét mã QR để chuyển khoản 100%</h6>
                     <p class="text-muted small mb-3">Sử dụng ứng dụng Ngân hàng hoặc MoMo để quét mã bên dưới</p>
                     
                     <!-- Hình QR  -->
                     <div class="bg-white p-3 rounded-4 d-inline-block shadow-sm border mb-3">
-                        <img src="\images\image.png" 
+                        <img src="{{ asset('images/image.png') }}" 
                              alt="QR Chuyển Khoản" class="img-fluid rounded-2" style="max-width: 180px; height: auto;" id="qrImage">
                     </div>
 
@@ -280,8 +256,8 @@
                             <strong class="text-dark">SHOP HOA TUOI BAFLORIST</strong>
                         </div>
                         <div class="d-flex justify-content-between mb-1">
-                            <span id="qrAmountLabel">Số tiền cọc (30%):</span>
-                            <strong class="text-danger price-number" id="qrAmountValue">1.350.000 ₫</strong>
+                            <span>Số tiền chuyển khoản:</span>
+                            <strong class="text-danger price-number">4.500.000 ₫</strong>
                         </div>
                         <div class="d-flex justify-content-between">
                             <span>Nội dung chuyển khoản:</span>
@@ -307,7 +283,7 @@
         </div>
         <h3 class="fw-bold text-primary-custom mb-2" style="font-family: var(--font-heading);">Đặt Hàng Thành Công!</h3>
         <p class="text-muted small mb-4 mx-auto" style="max-width: 400px;">
-            Cảm ơn bạn đã tin tưởng lựa chọn BAFlorist. Tiệm hoa sẽ liên hệ xác nhận đơn hàng trong thời gian sớm nhất.
+            Cảm ơn bạn đã tin tưởng lựa chọn BAFlorist. Tiệm hoa sẽ xác nhận thanh toán và liên hệ giao đơn hàng trong thời gian sớm nhất.
         </p>
 
         <div class="d-flex align-items-center justify-content-center gap-3 flex-wrap">
@@ -343,27 +319,6 @@
             el.style.display = 'block';
         } else {
             el.style.display = 'none';
-        }
-    }
-
-    // Hàm quản lý hiển thị khung tiền cọc và mã QR tùy theo phương thức thanh toán
-    function handlePaymentMethodChange() {
-        const payCod = document.getElementById('pay_cod');
-        const depositSection = document.getElementById('depositDetailsSection');
-        const qrContainer = document.getElementById('qrCodeContainer');
-        const qrAmountLabel = document.getElementById('qrAmountLabel');
-        const qrAmountValue = document.getElementById('qrAmountValue');
-
-        if (payCod.checked) {
-            depositSection.style.display = 'block';
-            qrContainer.style.display = 'block';
-            qrAmountLabel.innerText = "Số tiền cọc (30%):";
-            qrAmountValue.innerText = "1.350.000 ₫";
-        } else {
-            depositSection.style.display = 'none';
-            qrContainer.style.display = 'block'; // Vẫn hiện QR vì chuyển khoản 100%
-            qrAmountLabel.innerText = "Số tiền chuyển khoản (100%):";
-            qrAmountValue.innerText = "4.500.000 ₫";
         }
     }
 
@@ -414,7 +369,7 @@
 
         const form = document.getElementById('checkoutForm');
         if (form.checkValidity()) {
-            //  Toast
+            // Toast
             const toastEl = document.getElementById('successToast');
             toastEl.style.display = 'block';
 
