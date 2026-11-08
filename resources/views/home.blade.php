@@ -137,8 +137,7 @@
         @if(isset($categories) && count($categories) > 0)
             @foreach($categories as $category)
                 <div class="col-3 col-md-3 col-lg flex-grow-1">
-                    <a href="{{ route('products.index', ['category_id' => $category->id]) }}" class="text-decoration-none group-item d-block">
-                        <div class="rounded-circle overflow-hidden shadow-sm mx-auto mb-2 border border-2 bg-light d-flex align-items-center justify-content-center" style="width: 85px; height: 85px; border-color: rgba(123, 17, 19, 0.2) !important;">
+<a href="/products?category_id={{ $category->id }}" class="text-decoration-none group-item d-block">                        <div class="rounded-circle overflow-hidden shadow-sm mx-auto mb-2 border border-2 bg-light d-flex align-items-center justify-content-center" style="width: 85px; height: 85px; border-color: rgba(123, 17, 19, 0.2) !important;">
                             @if(!empty($category->image))
                                 @php
                                     $imgCat = $category->image;

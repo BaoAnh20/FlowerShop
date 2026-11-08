@@ -1,7 +1,6 @@
 <?php 
 
-namespace App\Http\Controllers\Api; 
-
+namespace App\Http\Controllers\Api\User; // Sửa lại đúng namespace theo thư mục
 use App\Http\Controllers\Controller; 
 use App\Models\Product; 
 use App\Models\ProductImage; // Model ảnh phụ (nếu có bảng product_images)

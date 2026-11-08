@@ -4,7 +4,6 @@
 
 @section('content')
 <div class="container-fluid px-3 px-md-4 py-4" id="productDetailContainer">
-    <!-- Trạng thái Đang tải -->
     <div class="row justify-content-center py-5">
         <div class="col-12 text-center py-5">
             <i class="fa-solid fa-spinner fa-spin fs-2 text-primary-custom mb-3"></i>
@@ -13,7 +12,7 @@
     </div>
 </div>
 
-<!-- Modal Lightbox Phóng To Ảnh -->
+<!-- Phóng To Ảnh -->
 <div class="modal fade" id="imageLightboxModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content bg-transparent border-0 position-relative">
@@ -50,7 +49,7 @@
         filter: invert(1);
     }
     
-    /* --- BỔ SUNG ĐOẠN NÀY ĐỂ CĂN GIỮA TUYỆT ĐỐI ẢNH PHỤ --- */
+    /* --- CĂN GIỮA ẢNH PHỤ --- */
     .thumbnails-wrapper {
         width: 100%;
         display: flex;
@@ -101,7 +100,7 @@
                     imagesList = ['https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=800'];
                 }
 
-                // Chuẩn hóa đường dẫn các ảnh
+                // đường dẫn các ảnh
                 imagesList = imagesList.map(img => {
                     if (!img.startsWith('http')) {
                         if (!img.startsWith('storage/') && !img.startsWith('images/')) {
@@ -118,7 +117,7 @@
                 let categoryName = product.category ? product.category.name : 'Hoa tươi';
                 let formattedPrice = Number(product.price).toLocaleString('vi-VN') + ' đ';
 
-                // Render HTML giao diện
+                // Render giao diện
                 container.innerHTML = `
                     <nav aria-label="breadcrumb" class="mb-4">
                         <ol class="breadcrumb mb-0">
@@ -209,9 +208,9 @@ ${imagesList.length > 1 ? `
                                     <button type="submit" class="btn rounded-pill px-4 py-3 fw-semibold bg-white flex-grow-1 shadow-sm product-outline-btn" style="border: 1px solid #111111; color: #111111; transition: all 0.2s;"> 
                                         Thêm vào giỏ 
                                     </button> 
-                                    <a href="/checkout" class="btn rounded-pill px-4 py-3 fw-semibold text-white flex-grow-1 shadow-sm text-center text-decoration-none btn-primary-custom"> 
-                                        Đặt ngay 
-                                    </a> 
+                               <a href="/checkout?product_id=${product.id}" class="btn rounded-pill px-4 py-3 fw-semibold text-white flex-grow-1 shadow-sm text-center text-decoration-none btn-primary-custom"> 
+    Đặt ngay 
+</a>
                                 </div> 
                             </form> 
                         </div> 

@@ -5,21 +5,21 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\HomeController;
 
 // --- 1. FE USER ---
-
-// Trang chủ (Gọi HomeController để truyền dữ liệu categories)
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// list sp
+// Danh sách sản phẩm (User)
 Route::get('/products', function () {
     return view('products.index');
 })->name('products.index');
 
-// detail sp
 Route::get('/product/{id}', function ($id) {
     return view('products.show', ['id' => $id]);
 })->name('products.show');
 
-// cart
+Route::get('/profile', function () {
+    return view('profile.index');
+})->name('profile.index');
+
 Route::get('/cart', function () {
     return view('cart.index', ['cartItems' => []]);
 })->name('cart.index');
@@ -40,7 +40,6 @@ Route::delete('/cart/remove/{id}', function ($id) {
     return redirect()->back()->with('success', 'Đã xóa sản phẩm khỏi giỏ hàng!');
 })->name('cart.remove');
 
-// Thanh toán
 Route::get('/checkout', function (Request $request) {
     return view('checkout.index', ['product_id' => $request->query('product_id', 1)]);
 })->name('checkout.index');
@@ -50,20 +49,18 @@ Route::post('/checkout/store', function (Request $request) {
     return redirect()->route('home')->with('success', 'Cảm ơn bạn đã đặt hàng! BAFlorist sẽ liên hệ giao hoa sớm nhất.');
 })->name('checkout.store');
 
-// Quản lý đơn hàng cá nhân & Tra cứu đơn hàng
 Route::get('/orders', function () {
     return view('orders.index', ['orders' => []]);
 })->name('orders.index');
 
 Route::get('/orders/lookup', function () {
-    return view('orders.lookup'); // tra cứu đơn = mã đơn/email sdt
+    return view('orders.lookup'); 
 })->name('orders.lookup');
 
 Route::get('/orders/{id}', function ($id) {
     return view('orders.show', ['id' => $id]);
 })->name('orders.show');
 
-// Xác thực tài khoản khách hàng (Login / Register)
 Route::get('/login', function () {
     return view('auth.login');
 })->name('login');
@@ -84,7 +81,6 @@ Route::post('/logout', function () {
     return redirect()->route('home')->with('success', 'Đã đăng xuất!');
 })->name('logout');
 
-// Các trang thông tin tĩnh
 Route::get('/ve-baflorist', function () {
     return view('aboutus.index');
 })->name('aboutus.index');
@@ -100,7 +96,7 @@ Route::get('/chinh-sach-doi-tra', function () {
 
 // --- 2. FE ADMIN ---
 Route::prefix('admin')->name('admin.')->group(function () {
-    // 1. Đăng nhập Ad
+    
     Route::get('/login', function () {
         return view('admin.auth.login');
     })->name('login');
@@ -110,10 +106,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     })->name('login.submit');
 
     Route::post('/logout', function () {
-        return redirect()->route('login')->with('success', 'Đã đăng xuất quản trị!');
+        return redirect()->route('admin.login')->with('success', 'Đã đăng xuất quản trị!');
     })->name('logout');
 
-    // 2. Dashboard
     Route::get('/', function () {
         return view('admin.dashboard');
     })->name('dashboard');
@@ -122,7 +117,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         return view('admin.dashboard');
     });
 
-    // 3. Quản lý danh mục
+    Route::get('/categories', function () {
+        return view('admin.categories.index');
+    })->name('categories.index');
+
     Route::post('/categories', function (Request $request) {
         return redirect()->route('admin.categories.index')->with('success', 'Thêm danh mục thành công!');
     })->name('categories.store');
@@ -135,10 +133,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         return redirect()->route('admin.categories.index')->with('success', 'Đã xóa danh mục!');
     })->name('categories.destroy');
 
-    // 4 & 5 & 6. Quản lý sản phẩm
+    // QUẢN LÝ SẢN PHẨM ADMIN (Đã sửa lại tên định danh để không bị trùng lặp với phía User)
     Route::get('/products', function () {
         return view('admin.products.index');
-    })->name('products.index');
+    })->name('products.index'); // Tên đầy đủ sẽ là admin.products.index
 
     Route::post('/products', function (Request $request) {
         return redirect()->route('admin.products.index')->with('success', 'Thêm mẫu hoa thành công!');
@@ -152,7 +150,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         return redirect()->route('admin.products.index')->with('success', 'Đã xóa mẫu hoa!');
     })->name('products.destroy');
 
-    // 7 & 8. Quản lý đơn hàng & Chi tiết / Cập nhật trạng thái
     Route::get('/orders', function () {
         return view('admin.orders.index');
     })->name('orders.index');
@@ -165,12 +162,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         return redirect()->back()->with('success', 'Đã cập nhật trạng thái đơn hàng!');
     })->name('orders.update_status');
 
-    // 9. Quản lý khách hàng
     Route::get('/users', function () {
         return view('admin.users.index');
     })->name('users.index');
 
-    // 10. Thống kê và báo cáo
     Route::get('/statistics', function () {
         return view('admin.statistics.index');
     })->name('statistics.index');

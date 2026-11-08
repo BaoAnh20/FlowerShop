@@ -2,22 +2,34 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+// Sử dụng các Controller phía User / Public
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\CategoryController;
-use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\User\CategoryController as UserCategoryController;
+use App\Http\Controllers\Api\User\ProductController as UserProductController;
 use App\Http\Controllers\Api\CartController;
 
-// --- 1. route mở ---
+// Sử dụng các Controller phía Admin
+use App\Http\Controllers\Api\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Api\Admin\CategoryController as AdminCategoryController;
+
+/*
+|--------------------------------------------------------------------------
+| 1. CÁC ROUTE MỞ (PUBLIC / USER) - Không yêu cầu đăng nhập
+|--------------------------------------------------------------------------
+*/
+
+// Xác thực tài khoản
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 // Danh mục (Public)
-Route::get('/categories', [CategoryController::class, 'index']);
-Route::get('/categories/{id}', [CategoryController::class, 'show']);
+Route::get('/categories', [UserCategoryController::class, 'index']);
+Route::get('/categories/{id}', [UserCategoryController::class, 'show']);
 
-// Sản phẩm (Public)
-Route::get('/products', [ProductController::class, 'index']);
-Route::get('/products/{id}', [ProductController::class, 'show']);
+// Sản phẩm (Public - Không yêu cầu đăng nhập)
+Route::get('/products', [UserProductController::class, 'index']);
+Route::get('/products/{id}', [UserProductController::class, 'show']);
 
 // Giỏ hàng (Hỗ trợ cả Guest và User)
 Route::get('/cart', [CartController::class, 'index']);
@@ -26,19 +38,26 @@ Route::put('/cart/{id}', [CartController::class, 'update']);
 Route::delete('/cart/{id}', [CartController::class, 'destroy']);
 
 
-// --- 2.route cần xác thực ---
+/*
+|--------------------------------------------------------------------------
+| 2. CÁC ROUTE CẦN XÁC THỰC & QUẢN TRỊ (AUTHENTICATED & ADMIN)
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth:sanctum')->group(function () {
-    // Auth
+    
+    // Auth cá nhân
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [AuthController::class, 'profile']);
 
-    // Quản lý danh mục (Admin)
-    Route::post('/categories', [CategoryController::class, 'store']);
-    Route::put('/categories/{id}', [CategoryController::class, 'update']);
-    Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
+    // Nhóm quản trị Admin (Tiền tố URL: /api/admin/...)
+    Route::prefix('admin')->group(function () {
+        
+        // Quản lý sản phẩm (Admin)
+        Route::apiResource('products', AdminProductController::class);
+        Route::delete('product-images/{id}', [AdminProductController::class, 'destroySubImage']);
+        Route::put('products/{id}/set-main-image', [AdminProductController::class, 'setMainImage']);
 
-    // Quản lý sản phẩm (Admin)
-    Route::post('/products', [ProductController::class, 'store']);
-    Route::put('/products/{id}', [ProductController::class, 'update']);
-    Route::delete('/products/{id}', [ProductController::class, 'destroy']);
+        // Quản lý danh mục (Admin - Dùng apiResource để có đủ GET, POST, PUT, DELETE, tránh lỗi 405)
+        Route::apiResource('categories', AdminCategoryController::class);
+    });
 });

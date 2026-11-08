@@ -11,11 +11,11 @@
                 <a class="nav-link text-nowrap {{ request()->routeIs('home') ? 'active fw-bold' : '' }}" href="{{ route('home') }}"> 
                     Trang chủ 
                 </a> 
-            </li> 
-            <li class="nav-item"> 
-                <a class="nav-link text-nowrap {{ request()->routeIs('products.*') ? 'active fw-bold' : '' }}" href="{{ route('products.index') }}"> 
-                    Sản phẩm 
-                </a> 
+          <li class="nav-item"> 
+    <a class="nav-link text-nowrap {{ request()->is('products*') ? 'active fw-bold' : '' }}" href="/products"> 
+        Sản phẩm 
+    </a> 
+</li>
             </li> 
             <li class="nav-item"> 
                 <a class="nav-link text-nowrap {{ request()->routeIs('orders.*') ? 'active fw-bold' : '' }}" href="{{ route('orders.index') }}"> 
@@ -24,32 +24,32 @@
             </li> 
 
             <!-- Danh mục Dropdown --> 
-            <li class="nav-item dropdown dropdown-hover"> 
-                <a class="nav-link text-nowrap dropdown-toggle d-flex align-items-center gap-1" href="{{ route('products.index') }}" id="categoryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"> 
-                    Danh mục <i class="fa-solid fa-chevron-down ms-1" style="font-size: 0.7rem;"></i> 
+    <li class="nav-item dropdown dropdown-hover"> 
+    <a class="nav-link text-nowrap dropdown-toggle d-flex align-items-center gap-1" href="#" id="categoryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"> 
+        Danh mục <i class="fa-solid fa-chevron-down ms-1" style="font-size: 0.7rem;"></i> 
+    </a> 
+    <ul class="dropdown-menu border-0 shadow-lg rounded-4 p-2 glass-dropdown" aria-labelledby="categoryDropdown" style="max-height: 380px; overflow-y: auto;"> 
+        @forelse($categories ?? [] as $category) 
+            <li> 
+                <a class="dropdown-item rounded-3 py-2 px-3 d-flex align-items-center gap-2" href="/products?category_id={{ $category->id }}"> 
+                    <i class="fa-solid fa-spa text-primary-custom"></i> {{ $category->name }} 
                 </a> 
-                <ul class="dropdown-menu border-0 shadow-lg rounded-4 p-2 glass-dropdown" aria-labelledby="categoryDropdown" style="max-height: 380px; overflow-y: auto;"> 
-                    @forelse($categories ?? [] as $category) 
-                        <li> 
-                            <a class="dropdown-item rounded-3 py-2 px-3 d-flex align-items-center gap-2" href="{{ route('products.index', ['category_id' => $category->id]) }}"> 
-                                <i class="fa-solid fa-spa text-primary-custom"></i> {{ $category->name }} 
-                            </a> 
-                        </li> 
-                    @empty 
-                        <li><a class="dropdown-item rounded-3 py-2 px-3" href="{{ route('products.index', ['category_id' => 1]) }}">Hoa Sinh Nhật</a></li> 
-                        <li><a class="dropdown-item rounded-3 py-2 px-3" href="{{ route('products.index', ['category_id' => 2]) }}">Hoa Khai Trương</a></li> 
-                        <li><a class="dropdown-item rounded-3 py-2 px-3" href="{{ route('products.index', ['category_id' => 3]) }}">Hoa Hồng</a></li> 
-                        <li><a class="dropdown-item rounded-3 py-2 px-3" href="{{ route('products.index', ['category_id' => 4]) }}">Hộp Hoa Mica</a></li> 
-                        <li><a class="dropdown-item rounded-3 py-2 px-3" href="{{ route('products.index', ['category_id' => 5]) }}">Hoa Tang Lễ</a></li> 
-                    @endforelse 
-                    <li><hr class="dropdown-divider opacity-25 my-1"></li> 
-                    <li> 
-                        <a class="dropdown-item rounded-3 py-2 px-3 fw-bold d-flex align-items-center justify-content-between text-primary-custom" href="{{ route('products.index') }}"> 
-                            <span>Tất cả các loại hoa</span> <i class="fa-solid fa-arrow-right small"></i> 
-                        </a> 
-                    </li> 
-                </ul> 
             </li> 
+        @empty 
+            <li><a class="dropdown-item rounded-3 py-2 px-3" href="/products?category_id=1">Hoa Sinh Nhật</a></li> 
+            <li><a class="dropdown-item rounded-3 py-2 px-3" href="/products?category_id=2">Hoa Khai Trương</a></li> 
+            <li><a class="dropdown-item rounded-3 py-2 px-3" href="/products?category_id=3">Hoa Hồng</a></li> 
+            <li><a class="dropdown-item rounded-3 py-2 px-3" href="/products?category_id=4">Hộp Hoa Mica</a></li> 
+            <li><a class="dropdown-item rounded-3 py-2 px-3" href="/products?category_id=5">Hoa Tang Lễ</a></li> 
+        @endforelse 
+        <li><hr class="dropdown-divider opacity-25 my-1"></li> 
+        <li> 
+            <a class="dropdown-item rounded-3 py-2 px-3 fw-bold d-flex align-items-center justify-content-between text-primary-custom" href="/products"> 
+                <span>Tất cả các loại hoa</span> <i class="fa-solid fa-arrow-right small"></i> 
+            </a> 
+        </li> 
+    </ul> 
+</li>
         </ul> 
 
         <!--  TÌM KIẾM  --> 

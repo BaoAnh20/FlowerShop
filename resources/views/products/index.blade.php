@@ -35,11 +35,11 @@
                 </div>
             </div>
 
-            <!-- Panel Bộ Lọc -->
+            <!-- Bộ Lọc -->
             <div id="filterDropdownPanel" class="shadow-lg rounded-4 bg-white border p-4" style="display: none; position: absolute; right: 0; top: 45px; width: 460px; z-index: 1050; border-color: rgba(123, 17, 19, 0.12) !important;">
                 <form id="filterForm">
                     <div class="row g-4 text-start">
-                        <!-- Mức giá -->
+                        <!-- giá -->
                         <div class="col-6">
                             <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
                                 <i class="fa-solid fa-tag text-primary-custom small"></i>
@@ -55,7 +55,7 @@
                             </div>
                         </div>
 
-                        <!-- Danh mục (Category) -->
+                        <!-- Danh mục -->
                         <div class="col-6">
                             <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
                                 <i class="fa-solid fa-spa text-primary-custom small"></i>
@@ -172,108 +172,101 @@ function loadFilteredAndSortedProducts() {
     fetchProducts(params);
 }
 
+// Hàm chuẩn hóa đường dẫn ảnh 
+function getFormattedClientImgUrl(imgSrc) {
+    if (!imgSrc) return 'https://images.unsplash.com/photo-1526047932273-341f2a7631f9?q=80&w=600';
+    if (imgSrc.startsWith('http')) return imgSrc;
+    if (imgSrc.startsWith('storage/')) return '/' + imgSrc;
+    if (!imgSrc.startsWith('images/')) return '/storage/images/' + imgSrc;
+    return '/storage/' + imgSrc;
+}
+
 async function fetchProducts(params = {}) {
     const container = document.getElementById('productsContainer');
     const countText = document.getElementById('productCountText');
-
+    
     container.innerHTML = `
-        <div class="text-center py-5">
-            <i class="fa-solid fa-spinner fa-spin fs-2 text-primary-custom mb-3"></i>
-            <p class="text-muted small">Đang tải danh sách hoa tươi...</p>
+        <div class="text-center py-5"> 
+            <i class="fa-solid fa-spinner fa-spin fs-2 text-primary-custom mb-3"></i> 
+            <p class="text-muted small">Đang tải danh sách hoa tươi...</p> 
         </div>
-    `;
+    `; 
 
     try {
-        const result = await window.apiService.getProducts(params);
-        if (result.ok && result.data.success) {
-            const paginatedData = result.data.data;
-            const products = paginatedData.data || paginatedData;
+        const result = await window.apiService.getProducts(params); 
+        if (result.ok && result.data && result.data.success) { 
+            // Bóc tách chính xác mảng sản phẩm từ cấu trúc phân trang Laravel (result.data.data.data)
+            const paginatedObj = result.data.data; 
+            const products = Array.isArray(paginatedObj) ? paginatedObj : (paginatedObj.data || []); 
+            
+            countText.innerText = `${products.length} sản phẩm`; 
 
-            countText.innerText = `${products.length} sản phẩm`;
+            if (products.length > 0) { 
+                // Gom nhóm sản phẩm theo tên danh mục 
+                const grouped = {}; 
+                products.forEach(product => { 
+                    const catName = product.category ? product.category.name : 'Danh mục khác'; 
+                    if (!grouped[catName]) { 
+                        grouped[catName] = []; 
+                    } 
+                    grouped[catName].push(product); 
+                }); 
 
-            if (products.length > 0) {
-                // Gom nhóm sản phẩm theo tên danh mục
-                const grouped = {};
-                products.forEach(product => {
-                    const catName = product.category ? product.category.name : 'Danh mục khác';
-                    if (!grouped[catName]) {
-                        grouped[catName] = [];
-                    }
-                    grouped[catName].push(product);
-                });
+                let html = ''; 
+                for (const [catName, catProducts] of Object.entries(grouped)) { 
+                    html += ` 
+                        <div class="mb-5"> 
+                            <h3 class="fw-bold mb-3 text-dark fs-4" style="font-family: var(--font-heading);"> ${catName} </h3> 
+                            <div class="row g-3"> 
+                    `; 
 
-                let html = '';
-                // Lặp qua từng danh mục để hiển thị tiêu đề và lưới 6 sản phẩm mỗi hàng
-                for (const [catName, catProducts] of Object.entries(grouped)) {
-                    html += `
-                        <div class="mb-5">
-                            <h3 class="fw-bold mb-3 text-dark fs-4" style="font-family: var(--font-heading);">
-                                ${catName}
-                            </h3>
-                            <div class="row g-3">
-                    `;
-
-                    catProducts.forEach(product => {
-                        let imgSrc = product.image;
-                        if (!imgSrc.startsWith('http')) {
-                            if (!imgSrc.startsWith('storage/') && !imgSrc.startsWith('images/')) {
-                                imgSrc = '/storage/images/' + imgSrc;
-                            } else if (imgSrc.startsWith('images/')) {
-                                imgSrc = '/storage/' + imgSrc;
-                            } else {
-                                imgSrc = '/' + imgSrc;
-                            }
-                        }
-
-                        let categoryName = product.category ? product.category.name : 'Hoa tươi';
-                        let formattedPrice = Number(product.price).toLocaleString('vi-VN') + ' đ';
-
-                        html += `
-                            <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-                                <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden product-card">
-                                    <a href="/product/${product.id}" class="text-decoration-none">
-                                        <div class="position-relative overflow-hidden bg-light" style="aspect-ratio: 1/1;">
-                                            <img src="${imgSrc}" class="w-100 h-100 object-fit-cover" alt="${product.name}" onerror="this.src='https://images.unsplash.com/photo-1561181286-d3fee7d55364?q=80&w=600'">
+                    catProducts.forEach(product => { 
+                        let imgSrc = getFormattedClientImgUrl(product.image); 
+                        let formattedPrice = Number(product.price || 0).toLocaleString('vi-VN') + ' đ'; 
+                        
+                        html += ` 
+                            <div class="col-6 col-sm-4 col-md-3 col-lg-2"> 
+                                <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden product-card"> 
+                                    <a href="/product/${product.id}" class="text-decoration-none text-dark"> 
+                                        <div style="height: 160px; overflow: hidden;">
+                                            <img src="${imgSrc}" class="w-100 h-100 object-fit-cover" alt="${product.name}" onerror="this.src='https://images.unsplash.com/photo-1561181286-d3fee7d55364?q=80&w=600'"> 
                                         </div>
-                                    </a>
-                                    <div class="card-body p-2 text-center d-flex flex-column justify-content-between">
-                                        <div>
-                                            <a href="/product/${product.id}" class="text-decoration-none text-dark">
-                                                <h6 class="card-title text-truncate fw-normal mb-1" style="font-size: 0.8rem;" title="${product.name}">${product.name}</h6>
-                                            </a>
-                                        </div>
-                                        <div class="text-dark fw-bold" style="font-size: 0.85rem;">
-                                            ${formattedPrice}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    });
+                                    </a> 
+                                    <div class="card-body p-2 text-center d-flex flex-column justify-content-between"> 
+                                        <div> 
+                                            <a href="/product/${product.id}" class="text-decoration-none text-dark fw-semibold small line-clamp-2" style="font-size: 0.85rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"> 
+                                                ${product.name}
+                                            </a> 
+                                        </div> 
+                                        <div class="text-primary-custom fw-bold mt-2" style="font-size: 0.88rem;"> ${formattedPrice} </div> 
+                                    </div> 
+                                </div> 
+                            </div> 
+                        `; 
+                    }); 
 
-                    html += `
-                            </div>
-                        </div>
-                    `;
-                }
-
-                container.innerHTML = html;
-            } else {
-                container.innerHTML = `
-                    <div class="text-center py-5">
-                        <i class="fa-solid fa-spa fs-1 text-primary-custom mb-3 opacity-50"></i>
-                        <p class="text-secondary mb-0">Không tìm thấy mẫu hoa nào phù hợp với lựa chọn của bạn!</p>
-                    </div>
-                `;
-                countText.innerText = `0 sản phẩm`;
-            }
-        } else {
-            container.innerHTML = '<div class="text-center text-danger py-4">Không thể tải dữ liệu sản phẩm từ máy chủ.</div>';
-        }
-    } catch (error) {
-        console.error('Lỗi khi gọi API sản phẩm:', error);
-        container.innerHTML = '<div class="text-center text-danger py-4">Lỗi kết nối đến máy chủ.</div>';
-    }
+                    html += ` 
+                            </div> 
+                        </div> 
+                    `; 
+                } 
+                container.innerHTML = html; 
+            } else { 
+                container.innerHTML = ` 
+                    <div class="text-center py-5"> 
+                        <i class="fa-solid fa-spa fs-1 text-primary-custom mb-3 opacity-50"></i> 
+                        <p class="text-secondary mb-0">Không tìm thấy mẫu hoa nào phù hợp với lựa chọn của bạn!</p> 
+                    </div> 
+                `; 
+                countText.innerText = `0 sản phẩm`; 
+            } 
+        } else { 
+            container.innerHTML = '<div class="text-center text-danger py-4">Không thể tải dữ liệu sản phẩm từ máy chủ.</div>'; 
+        } 
+    } catch (error) { 
+        console.error('Lỗi khi gọi API sản phẩm:', error); 
+        container.innerHTML = '<div class="text-center text-danger py-4">Lỗi kết nối đến máy chủ.</div>'; 
+    } 
 }
 
 function toggleFilterDropdown(event) {

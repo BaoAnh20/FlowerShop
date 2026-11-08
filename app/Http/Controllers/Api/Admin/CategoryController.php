@@ -1,30 +1,30 @@
-<?php 
+<?php
 
-namespace App\Http\Controllers\Api; 
+namespace App\Http\Controllers\Api\Admin;
 
-use App\Http\Controllers\Controller; 
-use App\Models\Category; 
-use Illuminate\Http\Request; 
+use App\Http\Controllers\Controller;
+use App\Models\Category;
+use Illuminate\Http\Request;
 
 class CategoryController extends Controller 
-{ 
-    // 1. Lấy danh sách toàn bộ danh mục
+{
+    // 1. Admin lấy toàn bộ danh mục (cả active và ẩn)
     public function index() 
     { 
-        $categories = Category::where('is_active', true)->get(); 
+        $categories = Category::orderBy('created_at', 'desc')->get(); 
         return response()->json([ 
             'success' => true, 
             'data' => $categories 
         ], 200); 
     } 
 
-    // 2. Thêm mới danh mục (Admin - Cần Token)
+    // 2. Thêm mới danh mục
     public function store(Request $request) 
     { 
         $validated = $request->validate([ 
             'name' => 'required|string|max:100|unique:categories,name', 
             'description' => 'nullable|string', 
-            'image' => 'nullable|sometimes|image|mimes:jpeg,png,jpg,webp|max:2048', // Đổi sang nhận file ảnh
+            'image' => 'nullable|sometimes|image|mimes:jpeg,png,jpg,webp|max:2048', 
             'is_active' => 'boolean' 
         ], [ 
             'name.required' => 'Tên danh mục không được để trống.', 
@@ -36,7 +36,6 @@ class CategoryController extends Controller
         ]); 
 
         $imageFilename = null;
-        // Xử lý lưu file ảnh danh mục vào thư mục public/storage/images
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $imageFilename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
@@ -46,7 +45,7 @@ class CategoryController extends Controller
         $category = Category::create([ 
             'name' => $validated['name'], 
             'description' => $validated['description'] ?? null, 
-            'image' => $imageFilename, // Lưu tên file vào DB
+            'image' => $imageFilename, 
             'is_active' => $request->input('is_active', true), 
         ]); 
 
@@ -57,7 +56,7 @@ class CategoryController extends Controller
         ], 201); 
     } 
 
-    // 3. Xem chi tiết 1 danh mục kèm sản phẩm
+    // 3. Xem chi tiết
     public function show($id) 
     { 
         $category = Category::with('products')->find($id); 
@@ -67,7 +66,7 @@ class CategoryController extends Controller
         return response()->json([ 'success' => true, 'data' => $category ], 200); 
     } 
 
-    // 4. Cập nhật danh mục (Admin - Cần Token)
+    // 4. Cập nhật danh mục (Hỗ trợ cả POST lẫn PUT khi gửi FormData có ảnh)
     public function update(Request $request, $id) 
     { 
         $category = Category::find($id); 
@@ -94,8 +93,12 @@ class CategoryController extends Controller
             $updateData['is_active'] = $request->input('is_active');
         }
 
-        // Xử lý cập nhật ảnh đại diện mới nếu có chọn file
         if ($request->hasFile('image')) {
+            // Xóa file ảnh cũ nếu có
+            if ($category->image && file_exists(public_path('storage/images/' . $category->image))) {
+                @unlink(public_path('storage/images/' . $category->image));
+            }
+
             $file = $request->file('image');
             $imageFilename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('storage/images'), $imageFilename);
@@ -111,7 +114,7 @@ class CategoryController extends Controller
         ], 200); 
     } 
 
-    // 5. Xóa danh mục (Admin - Cần Token)
+    // 5. Xóa danh mục
     public function destroy($id) 
     { 
         $category = Category::find($id); 
@@ -119,13 +122,17 @@ class CategoryController extends Controller
             return response()->json([ 'success' => false, 'message' => 'Không tìm thấy danh mục hoa cần xóa!' ], 404); 
         } 
 
-        // Kiểm tra xem danh mục còn sản phẩm bên trong hay không
         if ($category->products()->count() > 0) { 
             return response()->json([ 
                 'success' => false, 
                 'message' => 'Không thể xóa vì danh mục này vẫn chứa sản phẩm!' 
             ], 400); 
         } 
+
+        // Xóa file ảnh vật lý nếu có
+        if ($category->image && file_exists(public_path('storage/images/' . $category->image))) {
+            @unlink(public_path('storage/images/' . $category->image));
+        }
 
         $category->delete(); 
         return response()->json([ 
