@@ -474,9 +474,10 @@ function renderProducts(products) {
             subImgsHtml += '</div>';
         }
 
-        let statusBadge = (p.is_active == 1 || p.is_active === undefined) 
-            ? '<span class="badge rounded-pill bg-success px-2 py-1 mt-1" style="font-size: 10px;">Đang kinh doanh</span>' 
-            : '<span class="badge rounded-pill bg-secondary px-2 py-1 mt-1" style="font-size: 10px;">Ngừng kinh doanh</span>';
+
+let statusBadge = (p.is_active == 1 || p.is_active === undefined)
+    ? '<span class="badge rounded-pill px-3 py-1 mt-1" style="font-size: 10px; font-weight: 600; background-color: #0071FF; color: #ffffff;">Đang kinh doanh</span>'
+    : '<span class="badge rounded-pill px-3 py-1 mt-1" style="font-size: 10px; font-weight: 600; background-color: #FF3A41; color: #ffffff;">Ngừng kinh doanh</span>';
 
         let stockBadge = stockQty > 0 
             ? `<small class="text-muted d-block">Kho: <strong class="text-dark">${stockQty}</strong></small>` 
