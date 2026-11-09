@@ -98,9 +98,9 @@
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!--  nhận diện thời gian  -->
+    <!-- Nhận diện thời gian và hiển thị tên động từ LocalStorage / API -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", async function() {
             const hour = new Date().getHours();
             let greeting = "Chào buổi tối";
             if (hour >= 4 && hour < 11) {
@@ -110,7 +110,34 @@
             } else if (hour >= 13 && hour < 18) {
                 greeting = "Chào buổi chiều";
             }
-            document.getElementById('dynamic-greeting').innerText = `${greeting}, Admin Bảo Anh`;
+            
+            // 1. Kiểm tra xem đã lưu tên người dùng trong localStorage lúc đăng nhập chưa
+            let userName = localStorage.getItem('user_name');
+
+            // 2. Nếu chưa có, thử gọi API lấy thông tin user hiện tại bằng token
+            if (!userName) {
+                try {
+                    const token = localStorage.getItem('auth_token');
+                    if (token) {
+                        const response = await fetch('/api/user', {
+                            headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
+                        });
+                        const user = await response.json();
+                        if (user && user.name) {
+                            userName = user.name;
+                            localStorage.setItem('user_name', userName); // Lưu lại cho các trang sau
+                        }
+                    }
+                } catch (err) {
+                    console.error('Không thể lấy thông tin user:', err);
+                }
+            }
+
+            // Nếu vẫn không tìm thấy, mặc định "Admin"
+            userName = userName || "Admin BAnh";
+
+            // Hiển thị lời chào, tên
+            document.getElementById('dynamic-greeting').innerText = `${greeting}, ${userName}`;
         });
     </script>
     @stack('scripts')

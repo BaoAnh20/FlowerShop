@@ -26,11 +26,12 @@
             </div> 
 
             <!-- Mật khẩu --> 
-            <div class="mb-3"> 
-                <div class="d-flex justify-content-between align-items-center"> 
-                    <label class="form-label fw-semibold small text-secondary">Mật khẩu <span class="text-danger">*</span></label> 
-                    <a href="#" class="text-decoration-none small" style="color: var(--burgundy-primary, #7b1113);">Quên mật khẩu?</a> 
-                </div> 
+ <div class="mb-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <label class="form-label fw-semibold small text-secondary">Mật khẩu <span class="text-danger">*</span></label>
+        <a href="{{ route('password.request') }}" class="text-decoration-none small" style="color: var(--burgundy-primary, #7b1113);">Quên mật khẩu?</a>
+    </div>
+
                 <div class="input-group"> 
                     <span class="input-group-text bg-light border-0 rounded-start-pill ps-3 text-muted"><i class="fa-solid fa-lock"></i></span> 
                     <input type="password" name="password" id="passwordInput" class="form-control px-3 py-2 bg-light border-0 shadow-none" placeholder="••••••••" autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');" required> 

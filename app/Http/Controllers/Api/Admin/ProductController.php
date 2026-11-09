@@ -41,15 +41,14 @@ class ProductController extends Controller
             });
         }
 
-        $query->orderBy('created_at', 'desc');
-        $products = $query->paginate(12); 
+$query->orderBy('created_at', 'desc');
+    $products = $query->get(); // <-- lấy toàn bộ danh sách đã lọc
 
-        return response()->json([ 
-            'success' => true, 
-            'data' => $products 
-        ], 200); 
+    return response()->json([
+        'success' => true,
+        'data' => $products
+    ], 200);
     }
-
     public function show($id) 
     { 
         $product = Product::with(['category', 'images'])->find($id);
@@ -151,18 +150,71 @@ class ProductController extends Controller
         ], 200); 
     } 
 
-    public function destroy($id) 
-    { 
-        $product = Product::find($id); 
-        if (!$product) { 
-            return response()->json([ 'success' => false, 'message' => 'Không tìm thấy sản phẩm!' ], 404); 
-        } 
-        $product->delete(); 
-        return response()->json([ 
+    // public function destroy($id) 
+    // { 
+    //     $product = Product::find($id); 
+    //     if (!$product) { 
+    //         return response()->json([ 'success' => false, 'message' => 'Không tìm thấy sản phẩm!' ], 404); 
+    //     } 
+    //     $product->delete(); 
+    //     return response()->json([ 
+    //         'success' => true, 
+    //         'message' => 'Xóa sản phẩm thành công!' 
+    //     ], 200); 
+    // } 
+public function destroy($id)
+{
+    $product = Product::with('images')->find($id);
+    if (!$product) {
+        return response()->json([
+            'success' => false, 
+            'message' => 'Không tìm thấy sản phẩm!'
+        ], 404);
+    }
+
+    try {
+        // 1. Xóa file ảnh chính vật lý nếu có
+        if ($product->image) {
+            $mainPath = public_path('storage/images/' . $product->image);
+            if (file_exists($mainPath)) { 
+                @unlink($mainPath); 
+            }
+        }
+
+        // 2. Xóa các file ảnh phụ vật lý và bản ghi ảnh phụ (nếu có)
+        if ($product->images && $product->images->count() > 0) {
+            foreach ($product->images as $subImage) {
+                if ($subImage->image_path) {
+                    $subPath = public_path('storage/images/' . $subImage->image_path);
+                    if (file_exists($subPath)) { 
+                        @unlink($subPath); 
+                    }
+                }
+                $subImage->delete();
+            }
+        }
+
+        // 3. Xóa sản phẩm khỏi giỏ hàng của khách (bảng 'cart' đúng chuẩn CSDL của bạn)
+        if (\Schema::hasTable('cart')) {
+            \DB::table('cart')->where('product_id', $id)->delete();
+        }
+
+        // 4. Tiến hành xóa sản phẩm
+        $product->delete();
+
+        return response()->json([
             'success' => true, 
-            'message' => 'Xóa sản phẩm thành công!' 
-        ], 200); 
-    } 
+            'message' => 'Xóa sản phẩm thành công!'
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false, 
+            'message' => 'Lỗi hệ thống khi xóa: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
 
     public function destroySubImage($id)
     {
@@ -181,24 +233,30 @@ class ProductController extends Controller
         return response()->json(['success' => true, 'message' => 'Xóa ảnh phụ thành công!'], 200);
     }
 
-    public function setMainImage(Request $request, $id)
-    {
-        $product = Product::find($id);
-        if (!$product) {
-            return response()->json(['success' => false, 'message' => 'Không tìm thấy sản phẩm!'], 404);
-        }
-
-        $validated = $request->validate([
-            'main_image_path' => 'required|string',
-        ]);
-
-        $product->image = $validated['main_image_path'];
-        $product->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Đổi ảnh chính thành công!',
-            'data' => $product->load(['category', 'images'])
-        ], 200);
+   public function setMainImage(Request $request, $id)
+{
+    $product = Product::find($id);
+    if (!$product) {
+        return response()->json(['success' => false, 'message' => 'Không tìm thấy sản phẩm!'], 404);
     }
+
+    $validated = $request->validate([
+        'main_image_path' => 'required|string',
+    ]);
+
+    $rawPath = $validated['main_image_path'];
+    
+    // Xử lý bóc tách để chỉ lấy tên file thuần (tránh bị dính thư mục rác như storage/images/ nếu có)
+    // Ví dụ: nếu truyền vào /storage/images/abc.jpg hoặc storage/images/abc.jpg -> chỉ lấy abc.jpg
+    $filename = basename($rawPath);
+
+    $product->image = $filename;
+    $product->save();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Đổi ảnh chính thành công!',
+        'data' => $product->load(['category', 'images'])
+    ], 200);
+}
 }

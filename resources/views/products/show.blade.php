@@ -91,14 +91,23 @@
                 document.title = `${product.name} - BAFlorist`;
 
                 // Xử lý danh sách ảnh
-                let imagesList = [];
-                if (product.images && Array.isArray(product.images) && product.images.length > 0) {
-                    imagesList = product.images.map(img => img.image_path);
-                } else if (product.image) {
-                    imagesList = [product.image];
-                } else {
-                    imagesList = ['https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=800'];
-                }
+             // Xử lý danh sách ảnh (Luôn ưu tiên đưa ảnh chính lên vị trí đầu tiên)
+let imagesList = [];
+if (product.image) {
+    imagesList.push(product.image);
+}
+if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+    product.images.forEach(img => {
+        const subPath = img.image_path || img;
+        // Tránh thêm trùng lặp nếu ảnh chính đã nằm trong mảng ảnh phụ
+        if (subPath !== product.image && !imagesList.includes(subPath)) {
+            imagesList.push(subPath);
+        }
+    });
+}
+if (imagesList.length === 0) {
+    imagesList = ['https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=800'];
+}
 
                 // đường dẫn các ảnh
                 imagesList = imagesList.map(img => {

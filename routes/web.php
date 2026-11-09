@@ -7,6 +7,11 @@ use App\Http\Controllers\HomeController;
 // --- 1. FE USER ---
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// Bổ sung route Quên mật khẩu {{ route('password.request') }} 4 trang Login
+Route::get('/forgot-password', function () {
+    return view('auth.forgot-password');
+})->name('password.request');
+
 // Danh sách sản phẩm (User)
 Route::get('/products', function () {
     return view('products.index');
@@ -16,9 +21,26 @@ Route::get('/product/{id}', function ($id) {
     return view('products.show', ['id' => $id]);
 })->name('products.show');
 
+
+
+// --- Nhóm xử lý Hồ sơ cá nhân (Profile) ---
 Route::get('/profile', function () {
     return view('profile.index');
 })->name('profile.index');
+
+Route::put('/profile', function (Request $request) {
+    // Xử lý cập nhật thông tin cá nhân (Tên,...)
+    return redirect()->route('profile.index')->with('success', 'Cập nhật thông tin cá nhân thành công!');
+})->name('profile.update');
+
+Route::put('/profile/password', function (Request $request) {
+    // Xử lý đổi mật khẩu
+    return redirect()->route('profile.index')->with('success', 'Đổi mật khẩu thành công!');
+})->name('profile.password.update');
+
+
+
+
 
 Route::get('/cart', function () {
     return view('cart.index', ['cartItems' => []]);
@@ -133,10 +155,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         return redirect()->route('admin.categories.index')->with('success', 'Đã xóa danh mục!');
     })->name('categories.destroy');
 
-    // QUẢN LÝ SẢN PHẨM ADMIN (Đã sửa lại tên định danh để không bị trùng lặp với phía User)
+    // QUẢN LÝ SẢN PHẨM ADMIN
     Route::get('/products', function () {
         return view('admin.products.index');
-    })->name('products.index'); // Tên đầy đủ sẽ là admin.products.index
+    })->name('products.index');
 
     Route::post('/products', function (Request $request) {
         return redirect()->route('admin.products.index')->with('success', 'Thêm mẫu hoa thành công!');
