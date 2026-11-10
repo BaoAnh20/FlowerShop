@@ -39,11 +39,12 @@ Route::get('/categories/{id}', [UserCategoryController::class, 'show']);
 Route::get('/products', [UserProductController::class, 'index']);
 Route::get('/products/{id}', [UserProductController::class, 'show']);
 
-// Giỏ hàng (Guest và User)
+// // Giỏ hàng (Guest và User)
 Route::get('/cart', [CartController::class, 'index']);
 Route::post('/cart', [CartController::class, 'store']);
 Route::put('/cart/{id}', [CartController::class, 'update']);
 Route::delete('/cart/{id}', [CartController::class, 'destroy']);
+
 
 
 /*

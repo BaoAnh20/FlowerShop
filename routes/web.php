@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\HomeController;
-
+use App\Http\Controllers\Api\User\CartController;
 // --- 1. FE USER ---
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -42,25 +42,16 @@ Route::put('/profile/password', function (Request $request) {
 
 
 
-Route::get('/cart', function () {
-    return view('cart.index', ['cartItems' => []]);
-})->name('cart.index');
+// --- GIỎ HÀNG & THANH TOÁN 
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add/{id?}', [CartController::class, 'store'])->name('cart.add');
+Route::patch('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+Route::delete('/cart/remove/{id}', [CartController::class, 'destroy'])->name('cart.remove');
 
-Route::post('/cart/add/{id?}', function (Request $request, $id = null) {
-    $count = session('cart_count', 0) + ($request->input('quantity', 1));
-    session(['cart_count' => $count]);
-    return redirect()->back()->with('success', 'Đã thêm sản phẩm vào giỏ hàng!');
-})->name('cart.add');
+// Xử lý đặt hàng
+Route::post('/orders/store', [CartController::class, 'storeOrder'])->name('orders.store');
 
-Route::patch('/cart/update/{id}', function (Request $request, $id) {
-    return redirect()->back()->with('success', 'Đã cập nhật số lượng!');
-})->name('cart.update');
 
-Route::delete('/cart/remove/{id}', function ($id) {
-    $count = max(0, session('cart_count', 1) - 1);
-    session(['cart_count' => $count]);
-    return redirect()->back()->with('success', 'Đã xóa sản phẩm khỏi giỏ hàng!');
-})->name('cart.remove');
 
 Route::get('/checkout', function (Request $request) {
     return view('checkout.index', ['product_id' => $request->query('product_id', 1)]);

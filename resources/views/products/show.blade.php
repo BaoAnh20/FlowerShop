@@ -209,19 +209,19 @@ ${imagesList.length > 1 ? `
                             </div> 
 
                             <!-- Form Thêm vào giỏ & Mua ngay --> 
-                            <form action="/cart/add" method="POST" id="productForm">
-                                <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''}">
-                                <input type="hidden" name="product_id" value="${product.id}"> 
-                                <input type="hidden" name="quantity" value="1"> 
-                                <div class="d-flex align-items-center gap-3 flex-wrap"> 
-                                    <button type="submit" class="btn rounded-pill px-4 py-3 fw-semibold bg-white flex-grow-1 shadow-sm product-outline-btn" style="border: 1px solid #111111; color: #111111; transition: all 0.2s;"> 
-                                        Thêm vào giỏ 
-                                    </button> 
-                               <a href="/checkout?product_id=${product.id}" class="btn rounded-pill px-4 py-3 fw-semibold text-white flex-grow-1 shadow-sm text-center text-decoration-none btn-primary-custom"> 
-    Đặt ngay 
-</a>
-                                </div> 
-                            </form> 
+                            <!-- Form Thêm vào giỏ & Mua ngay --> 
+<form action="/cart/add/${product.id}" method="POST" id="productForm"> 
+    <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''}"> 
+    <input type="hidden" name="quantity" value="1"> 
+    <div class="d-flex align-items-center gap-3 flex-wrap"> 
+        <button type="submit" class="btn rounded-pill px-4 py-3 fw-semibold bg-white flex-grow-1 shadow-sm product-outline-btn" style="border: 1px solid #111111; color: #111111; transition: all 0.2s;"> 
+            Thêm vào giỏ 
+        </button> 
+        <a href="/checkout?product_id=${product.id}" class="btn rounded-pill px-4 py-3 fw-semibold text-white flex-grow-1 shadow-sm text-center text-decoration-none btn-primary-custom"> 
+            Đặt ngay 
+        </a> 
+    </div> 
+</form>
                         </div> 
                     </div>
                 `;

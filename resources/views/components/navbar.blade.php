@@ -65,7 +65,7 @@
             <button class="btn rounded-circle position-relative p-2 d-flex align-items-center justify-content-center shadow-sm bg-white text-primary-custom" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas" style="width: 40px; height: 40px; border: 1px solid rgba(123, 17, 19, 0.25) !important;">
                 <i class="fa-solid fa-bag-shopping"></i>
                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary-custom text-white" style="font-size: 0.65rem;">
-                    {{ isset($cartItems) ? count($cartItems) : 0 }}
+                    {{ $cartCount ?? 0 }}
                 </span>
             </button>
 
@@ -134,17 +134,35 @@
             <div class="flex-grow-1 overflow-y-auto">
                 @foreach($miniCartItems as $item)
                     @php
+                        $pId = $item->product->id ?? $item->product_id ?? '#';
                         $pName = $item->product->name ?? $item->name ?? 'Sản phẩm';
                         $pPrice = $item->product->price ?? $item->price ?? 0;
                         $pImage = $item->product->image ?? $item->image ?? '';
                         // Chuẩn hóa đường dẫn ảnh từ storage nếu cần
-                        $imgUrl = $pImage ? (str_starts_with($pImage, 'http') ? $pImage : asset('storage/' . $pImage)) : 'https://images.unsplash.com/photo-1561181286-d3fee7d55364?q=80&w=300';
-                    @endphp
+if (!$pImage) {
+        $imgUrl = 'https://images.unsplash.com/photo-1561181286-d3fee7d55364?q=80&w=300';
+    } elseif (str_starts_with($pImage, 'http')) {
+        $imgUrl = $pImage;
+    } elseif (str_starts_with($pImage, 'storage/')) {
+        $imgUrl = '/' . $pImage;
+    } elseif (str_starts_with($pImage, 'images/')) {
+        $imgUrl = '/storage/' . $pImage;
+    } else {
+        $imgUrl = '/storage/images/' . $pImage;
+    }                    @endphp
                     <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom position-relative" style="border-color: rgba(123, 17, 19, 0.08) !important;">
                         <div class="d-flex align-items-center gap-3">
-                            <img src="{{ $imgUrl }}" class="rounded-3 object-fit-cover shadow-sm border" width="70" height="70" alt="{{ $pName }}" onerror="this.src='https://images.unsplash.com/photo-1561181286-d3fee7d55364?q=80&w=300'">
+                            <!-- Ảnh sản phẩm bấm vào chuyển đến trang chi tiết -->
+                            <a href="/product/{{ $pId }}">
+                                <img src="{{ $imgUrl }}" class="rounded-3 object-fit-cover shadow-sm border" width="70" height="70" alt="{{ $pName }}" onerror="this.src='https://images.unsplash.com/photo-1561181286-d3fee7d55364?q=80&w=300'">
+                            </a>
                             <div>
-                                <h6 class="fw-bold mb-1 text-dark" style="font-size: 0.9rem; line-height: 1.3;">{{ $pName }}</h6>
+                                <!-- Thay đổi tên sản phẩm thành thẻ a dẫn đến trang chi tiết sản phẩm -->
+                                <h6 class="mb-1" style="font-size: 0.9rem; line-height: 1.3;">
+                                    <a href="/product/{{ $pId }}" class="text-decoration-none text-dark fw-bold hover-burgundy">
+                                        {{ $pName }}
+                                    </a>
+                                </h6>
                                 <div class="fw-bold price-number mb-2 text-primary-custom" style="font-size: 0.92rem;">
                                     {{ number_format($pPrice, 0, ',', '.') }} đ
                                 </div>
@@ -190,9 +208,9 @@
                 <i class="fa-solid fa-basket-shopping fs-1 text-muted mb-3 text-primary-custom"></i>
                 <h6 class="fw-bold text-secondary">Giỏ hàng trống</h6>
                 <p class="text-muted small">Hãy chọn thêm các mẫu hoa tươi tuyệt đẹp nhé.</p>
-                <a href="{{ route('products.index') }}" class="btn btn-primary-custom rounded-pill px-4 mt-2">
-                    Khám phá hoa tươi
-                </a>
+<a href="/products" class="btn btn-primary-custom rounded-pill px-4 mt-2 text-decoration-none">
+    <i class="fa-solid fa-spa me-1"></i> Khám phá hoa tươi
+</a>
             </div>
         @endif
     </div>
