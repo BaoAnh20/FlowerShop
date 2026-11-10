@@ -380,7 +380,7 @@ if (filterStatus) filterStatus.addEventListener('change', loadFilteredAdminProdu
             formData.append('category_id', document.getElementById('prodCat').value);
             formData.append('price', document.getElementById('prodPrice').value);
             formData.append('stock_quantity', document.getElementById('prodStock').value);
-            formData.append('is_active', document.getElementById('prodStatus').value);
+            // formData.append('is_active', document.getElementById('prodStatus').value);
             
             formData.append('primary_flower', document.getElementById('prodPrimaryFlower').value);
             formData.append('style', document.getElementById('prodStyle').value);

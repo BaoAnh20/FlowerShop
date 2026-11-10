@@ -207,4 +207,58 @@ class AuthController extends Controller
             'message' => 'Đổi mật khẩu thành công!'
         ], 200);
     }
-}
+
+
+public function adminLogin(Request $request)
+    {
+        $validated = $request->validate([
+            'login'    => 'required', // Email hoặc số điện thoại
+            'password' => 'required',
+        ], [
+            'login.required'    => 'Email hoặc số điện thoại không được để trống.',
+            'password.required' => 'Mật khẩu không được để trống.',
+        ]);
+
+        $field = filter_var($validated['login'], FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+
+        $user = User::where($field, $validated['login'])->first();
+
+        // 1. Kiểm tra tài khoản và mật khẩu
+        if (!$user || !Hash::check($validated['password'], $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Email/Số điện thoại hoặc mật khẩu không chính xác!'
+            ], 401);
+        }
+
+        // 2. Bắt buộc kiểm tra quyền quản trị
+        if ($user->user_type !== 'admin') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tài khoản này không có quyền truy cập trang quản trị!'
+            ], 403);
+        }
+
+        // 3. Xóa token cũ và cấp token mới cho Admin
+        $user->tokens()->delete();
+        $token = $user->createToken('admin_auth_token')->plainTextToken;
+
+        return response()->json([
+            'success'      => true,
+            'message'      => 'Đăng nhập trang quản trị thành công!',
+            'access_token' => $token,
+            'token_type'   => 'Bearer',
+            'user'         => [
+                'id'        => $user->id,
+                'name'      => $user->name,
+                'email'     => $user->email,
+                'phone'     => $user->phone,
+                'address'   => $user->address,
+                'user_type' => $user->user_type, 
+            ]
+        ], 200);
+    }
+    
+    
+    
+    }

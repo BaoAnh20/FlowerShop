@@ -54,8 +54,7 @@
 
         <!-- TÌM KIẾM -->
         <div class="d-flex align-items-center gap-2 my-auto flex-grow-1 flex-md-grow-0" style="min-width: 250px; max-width: 360px;">
-            <form action="{{ route('products.index') }}" method="GET" class="position-relative w-100">
-                <input type="text" name="search" class="form-control form-control-sm rounded-pill ps-3 pe-5 border-0 bg-white shadow-sm" placeholder="Tìm sản phẩm hoa, dịp tặng, cảm xúc..." value="{{ request('search') }}" style="height: 40px; font-size: 0.875rem; border: 1px solid rgba(123, 17, 19, 0.15) !important;">
+<form action="/products" method="GET" class="position-relative w-100">                <input type="text" name="search" class="form-control form-control-sm rounded-pill ps-3 pe-5 border-0 bg-white shadow-sm" placeholder="Tìm sản phẩm hoa, dịp tặng, cảm xúc..." value="{{ request('search') }}" style="height: 40px; font-size: 0.875rem; border: 1px solid rgba(123, 17, 19, 0.15) !important;">
                 <button type="submit" class="btn btn-link position-absolute end-0 top-50 translate-middle-y me-2 p-0 border-0 text-primary-custom" title="Tìm kiếm">
                     <i class="fa-solid fa-magnifying-glass fs-6"></i>
                 </button>

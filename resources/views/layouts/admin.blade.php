@@ -58,12 +58,12 @@
             <hr class="opacity-15 mt-4" style="color: #d1c7bd;">
 
             <div class="px-2">
-                <form action="{{ route('admin.logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="btn btn-sm w-100 fw-semibold text-white py-2" style="background: linear-gradient(135deg, #7b1113 0%, #5c0d0f 100%); border-radius: 12px; border: none; box-shadow: 0 4px 12px rgba(123, 17, 19, 0.3);">
-                        <i class="fa-solid fa-right-from-bracket me-1"></i> Đăng xuất Admin
-                    </button>
-                </form>
+<form action="{{ route('admin.logout') }}" method="POST" onsubmit="localStorage.clear();">
+    @csrf
+    <button type="submit" class="btn btn-sm w-100 fw-semibold text-white py-2" style="background: linear-gradient(135deg, #7b1113 0%, #5c0d0f 100%); border-radius: 12px; border: none; box-shadow: 0 4px 12px rgba(123, 17, 19, 0.3);">
+        <i class="fa-solid fa-right-from-bracket me-1"></i> Đăng xuất Admin
+    </button>
+</form>
             </div>
         </div>
 
@@ -142,4 +142,4 @@
     </script>
     @stack('scripts')
 </body>
-</html>
+</html> 

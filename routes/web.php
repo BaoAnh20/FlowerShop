@@ -7,7 +7,7 @@ use App\Http\Controllers\HomeController;
 // --- 1. FE USER ---
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Bổ sung route Quên mật khẩu {{ route('password.request') }} 4 trang Login
+// Quên mật khẩu {{ route('password.request') }} 4 trang Login
 Route::get('/forgot-password', function () {
     return view('auth.forgot-password');
 })->name('password.request');
@@ -23,7 +23,7 @@ Route::get('/product/{id}', function ($id) {
 
 
 
-// --- Nhóm xử lý Hồ sơ cá nhân (Profile) ---
+// --- xử lý Hồ sơ cá nhân (Profile) ---
 Route::get('/profile', function () {
     return view('profile.index');
 })->name('profile.index');
@@ -120,7 +120,7 @@ Route::get('/chinh-sach-doi-tra', function () {
 Route::prefix('admin')->name('admin.')->group(function () {
     
     Route::get('/login', function () {
-        return view('admin.auth.login');
+        return view('auth.login');
     })->name('login');
 
     Route::post('/login', function (Request $request) {

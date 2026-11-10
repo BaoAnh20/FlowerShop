@@ -25,6 +25,12 @@ Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+
+
+Route::post('/admin/login', [AuthController::class, 'adminLogin']);
+
+
+
 // Danh mục (Public)
 Route::get('/categories', [UserCategoryController::class, 'index']);
 Route::get('/categories/{id}', [UserCategoryController::class, 'show']);
