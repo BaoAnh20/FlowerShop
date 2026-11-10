@@ -133,19 +133,37 @@ let currentSort = '';
 document.addEventListener("DOMContentLoaded", function() {
     const urlParams = new URLSearchParams(window.location.search);
     const searchKeyword = urlParams.get('search') || '';
+    const categoryId = urlParams.get('category_id') || '';
+
+    let initialParams = {};
 
     if (searchKeyword) {
         document.getElementById('pageTitle').innerText = `Kết quả tìm kiếm cho "${searchKeyword}"`;
+        initialParams.search = searchKeyword;
     }
 
-    fetchProducts({ search: searchKeyword });
+    // 1. Tự động nhận diện category_id từ URL khi bấm từ Navbar sang
+    if (categoryId) {
+        initialParams.category_id = categoryId;
+        
+        // Tự động tích chọn vào ô checkbox danh mục tương ứng trong bảng lọc
+        const targetCheckbox = document.getElementById(`cat-${categoryId}`);
+        if (targetCheckbox) {
+            targetCheckbox.checked = true;
+        }
+    }
 
+    // 2. Gọi API tải sản phẩm dựa trên tham số ban đầu (search hoặc category_id)
+    fetchProducts(initialParams);
+
+    // Sự kiện submit form bộ lọc
     document.getElementById('filterForm').addEventListener('submit', function(e) {
         e.preventDefault();
         loadFilteredAndSortedProducts();
         closeFilterDropdown();
     });
 
+    // Xử lý sự kiện sắp xếp
     document.querySelectorAll('.sort-option').forEach(item => {
         item.addEventListener('click', function(e) {
             e.preventDefault();
